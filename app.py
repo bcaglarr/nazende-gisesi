@@ -1,5 +1,7 @@
 import os
+import secrets
 import sqlite3
+from urllib.parse import urlparse
 from pathlib import Path
 
 from flask import Flask, g, jsonify, redirect, render_template, request, send_from_directory, session, url_for
@@ -11,7 +13,30 @@ else:
     DB_PATH = APP_DIR / "nazende.db"
 
 app = Flask(__name__)
-app.secret_key = "nazende-lab-demo-key"
+app.secret_key = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
+app.config.update(SESSION_COOKIE_SECURE=True, SESSION_COOKIE_SAMESITE="Lax")
+
+SQLITE_MAX_INT = 2**63 - 1
+
+
+def guvenli_geri(varsayilan):
+    ref = request.referrer
+    if ref and urlparse(ref).netloc == request.host:
+        return ref
+    return varsayilan
+
+
+@app.after_request
+def guvenlik_basliklari(resp):
+    resp.headers["X-Content-Type-Options"] = "nosniff"
+    resp.headers["X-Frame-Options"] = "DENY"
+    resp.headers["Referrer-Policy"] = "same-origin"
+    resp.headers["Content-Security-Policy"] = (
+        "default-src 'self'; img-src 'self'; style-src 'self'; "
+        "script-src 'none'; object-src 'none'; base-uri 'none'; "
+        "form-action 'self'; frame-ancestors 'none'"
+    )
+    return resp
 
 ORDINALS = {
     1: "Birinci",
@@ -243,7 +268,7 @@ def uygula_kupon():
     if not row:
         session["kupon"] = None
         session["kupon_mesaj"] = "Bu kod gişede yok."
-        return redirect(request.referrer or url_for("index"))
+        return redirect(guvenli_geri(url_for("index")))
     session["kupon"] = {"kod": row["kod"], "indirim": row["indirim"]}
     if row["kod"] == "LOCA-7":
         session["kupon_mesaj"] = (
@@ -258,11 +283,13 @@ def uygula_kupon():
         session["kupon_mesaj"] = "Teknik ekip indirimi uygulandı."
     else:
         session["kupon_mesaj"] = row["aciklama"]
-    return redirect(request.referrer or url_for("bilet", bilet_id=1004))
+    return redirect(guvenli_geri(url_for("bilet", bilet_id=1004)))
 
 
 @app.route("/loca/<int:loca_id>")
 def loca(loca_id):
+    if loca_id > SQLITE_MAX_INT:
+        return render_template("not_found.html", ne="Loca"), 404
     row = get_db().execute("SELECT * FROM localar WHERE id = ?", (loca_id,)).fetchone()
     if not row:
         return render_template("not_found.html", ne="Loca"), 404
@@ -271,11 +298,20 @@ def loca(loca_id):
 
 @app.route("/bilet/<int:bilet_id>")
 def bilet(bilet_id):
+    if bilet_id > SQLITE_MAX_INT:
+        return render_template("not_found.html", ne="Bilet"), 404
     row = get_db().execute("SELECT * FROM biletler WHERE id = ?", (bilet_id,)).fetchone()
     if not row:
         return render_template("not_found.html", ne="Bilet"), 404
     fiyat = row["fiyat"]
     kupon = session.get("kupon")
+    if not isinstance(kupon, dict):
+        kupon = None
+    if kupon:
+        k = get_db().execute(
+            "SELECT kod, indirim FROM kuponlar WHERE kod = ?", (kupon.get("kod"),)
+        ).fetchone()
+        kupon = {"kod": k["kod"], "indirim": k["indirim"]} if k else None
     if kupon and fiyat:
         fiyat = int(fiyat * (100 - kupon["indirim"]) / 100)
     return render_template(
