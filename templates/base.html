@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2a0d13">
   <title>{% block title %}Nazende Gişesi{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+  <div class="isik" aria-hidden="true"></div>
   <div class="frame">
     <header class="top">
       <p class="eyebrow">semt sahnesi · gişe</p>
@@ -21,7 +23,7 @@
       {% block content %}{% endblock %}
     </main>
     <footer>
-      <p>Nazende Gişesi · kadife koltuk, dar fuaye</p>
+      <p>Nazende Gişesi · kadife koltuklar, dar bir fuaye ve hiç sönmeyen bir sahne ışığı</p>
       <!-- kupon listesi gişe defterinden çekilir: /api/kuponlar -->
       <!-- stajyer notu: FLAG{stajyer_sildi} -->
     </footer>
