@@ -2,7 +2,7 @@
 
 Bunu README'ye veya public PR açıklamasına koyma.
 
-## Flag 1 — `TUGA{DOKUZUNCU_LOCA_BOS_KALSIN}`
+## Flag 1 — `TUGA{DOKUZUNCU_LOCA_BOS_KALMASIN}`
 
 1. HTML kaynağında yorum: `/api/kuponlar`
 2. `GET /api/kuponlar` yetkisiz tüm kodları verir: `OGRENCI10`, `LOCA-7`, `SUFLOR`

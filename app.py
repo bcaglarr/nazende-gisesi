@@ -126,7 +126,7 @@ def init_db():
         ad, tur = kisiler[i]
         if i == 9:
             not_metni = None
-            flag = "TUGA{DOKUZUNCU_LOCA_BOS_KALSIN}"
+            flag = "TUGA{DOKUZUNCU_LOCA_BOS_KALMASIN}"
         elif i == 1:
             not_metni = "FLAG{stajyer_sildi}"
             flag = None
