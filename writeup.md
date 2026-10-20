@@ -15,6 +15,8 @@ Haritada L5 / L7 loca kaydına da gider.
 
 Yem (flag değil): HTML yorumunda ve `/loca/1` notunda `FLAG{stajyer_sildi}`. Format `TUGA{}` olmadığı için sayılmaz.
 
+Yem 2 (flag değil): `OGRENCI10` kuponu uygulanınca mesajda `FLAG{ogrenci_indirimi_flag_degil}` görünür. Format `TUGA{}` olmadığı için sayılmaz.
+
 ## Flag 2 — `TUGA{PROVADA_ALKIS_YASAK}`
 
 1. “Biletlerim” `/bilet/1004`

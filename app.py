@@ -50,6 +50,18 @@ SEANSLAR = {
 }
 
 
+KOLTUKLAR = [
+    ("A1", True),
+    ("A2", True),
+    ("A3", False),
+    ("B1", True),
+    ("B2", False),
+    ("C7", True),
+    ("L5", False),
+    ("L7", False),
+]
+
+
 def get_db():
     if "db" not in g:
         g.db = sqlite3.connect(DB_PATH)
@@ -204,16 +216,7 @@ def seans(seans_id):
     s = SEANSLAR.get(seans_id)
     if not s:
         return render_template("not_found.html", ne="Seans"), 404
-    koltuklar = [
-        ("A1", True),
-        ("A2", True),
-        ("A3", False),
-        ("B1", True),
-        ("B2", False),
-        ("C7", True),
-        ("L5", False),
-        ("L7", False),
-    ]
+    koltuklar = KOLTUKLAR
     return render_template(
         "seans.html",
         seans=s,
@@ -247,7 +250,10 @@ def uygula_kupon():
             "LOCA-7 kabul edildi. Gişe notu: yedinci loca defterine bakın (/loca/7)."
         )
     elif row["kod"] == "OGRENCI10":
-        session["kupon_mesaj"] = "Öğrenci indirimi uygulandı."
+        session["kupon_mesaj"] = (
+            "OGRENCI10 kabul edildi. %10 öğrenci indirimi uygulandı. "
+            "Gişe görevlisi fısıldıyor: FLAG{ogrenci_indirimi_flag_degil}"
+        )
     elif row["kod"] == "SUFLOR":
         session["kupon_mesaj"] = "Teknik ekip indirimi uygulandı."
     else:
@@ -279,6 +285,15 @@ def bilet(bilet_id):
         kupon=kupon,
         mesaj=session.pop("kupon_mesaj", None),
     )
+
+
+@app.route("/seans/<int:seans_id>/koltuk/<kod>")
+def koltuk(seans_id, kod):
+    s = SEANSLAR.get(seans_id)
+    durum = dict(KOLTUKLAR).get(kod)
+    if not s or durum is None:
+        return render_template("not_found.html", ne="Koltuk"), 404
+    return render_template("koltuk.html", seans=s, kod=kod, bos=durum)
 
 
 @app.route("/biletlerim")

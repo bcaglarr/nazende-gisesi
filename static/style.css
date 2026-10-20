@@ -117,3 +117,11 @@ footer p{margin:0}
   dd{margin-bottom:.6rem}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* tıklanabilir koltuklar */
+a.koltuk{cursor:pointer}
+a.koltuk:hover,a.koltuk:focus-visible{transform:scale(1.08);box-shadow:0 0 0 2px var(--altin-acik);filter:brightness(1.15)}
+.durum{font-size:1.1rem;padding:.7rem 1rem;border-radius:10px}
+.bos-durum{background:#e3f1e6;color:#24502f}
+.dolu-durum{background:#f1e1e3;color:#5a1f2a}
+.geri{color:var(--bordo);font-weight:600;text-decoration:none}

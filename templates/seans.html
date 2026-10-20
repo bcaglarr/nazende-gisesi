@@ -20,7 +20,7 @@
       {% elif kod == "L7" %}
         <a class="koltuk dolu" href="{{ url_for('loca', loca_id=7) }}">L7</a>
       {% else %}
-        <span class="koltuk {% if bos %}bos{% else %}dolu{% endif %}">{{ kod }}</span>
+        <a class="koltuk {% if bos %}bos{% else %}dolu{% endif %}" href="{{ url_for('koltuk', seans_id=seans.id, kod=kod) }}">{{ kod }}</a>
       {% endif %}
     {% endfor %}
   </div>

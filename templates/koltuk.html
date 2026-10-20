@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Koltuk {{ kod }} · Nazende{% endblock %}
+{% block content %}
+<section class="kart koltuk-kart">
+  <p class="kucuk">{{ seans.oyun }} · {{ seans.gun }} {{ seans.saat }}</p>
+  <h1>Koltuk {{ kod }}</h1>
+  {% if bos %}
+  <p class="durum bos-durum">Bu koltuk boş. Perde açılmadan önce yerini ayırtabilirsin.</p>
+  <p><a class="btn" href="{{ url_for('biletlerim') }}">Bileti al</a></p>
+  {% else %}
+  <p class="durum dolu-durum">Bu koltuk dolu. Başka bir seyirci çoktan yerini almış.</p>
+  {% endif %}
+  <p><a class="geri" href="{{ url_for('seans', seans_id=seans.id) }}">← Koltuk haritasına dön</a></p>
+</section>
+{% endblock %}
